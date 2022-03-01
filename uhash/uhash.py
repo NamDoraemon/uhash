@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from hashlib import md5
-from base64 import b64encode, b64decode
-from Crypto.Cipher import DES3
-from Crypto.Util.Padding import unpad
-from numpy import pad
+import base64
+import hashlib
+from loguru import logger
 
+from Crypto.Cipher import DES3
+from Crypto.Util.Padding import pad, unpad
+
+from urbox_lib.securities.config import URBOX_SECRET
 from uhash.config import URBOX_SECRET
 
 
@@ -17,16 +19,17 @@ class UHash(object):
         if not key:
             key = self.secret
 
-        md5_key = md5(key.encode("utf-8")).hexdigest()[0:24]
+        md5_key = hashlib.md5(key.encode("utf-8")).hexdigest()[0:24]
         data_bytes = bytes(data.encode("utf-8"))
-        cipher_txt = (b64encode(data_bytes)).decode("utf-8").replace("=", "")
+        cipher_txt = (base64.b64encode(data_bytes)).decode("utf-8").replace("=", "")
         cipher = DES3.new(md5_key, DES3.MODE_ECB)
         plain_txt = cipher.encrypt(pad(cipher_txt.encode("utf-8"), DES3.block_size))
 
         try:
-            cipher_base64 = b64encode(plain_txt, altchars="-_".encode("utf-8")).decode("utf-8")
-        except Exception:
-            cipher_base64 = b64encode(plain_txt).decode('utf-8')
+            cipher_base64 = base64.b64encode(plain_txt, altchars="-_".encode("utf-8")).decode("utf-8")
+        except Exception as e:
+            logger.error(e)
+            cipher_base64 = base64.b64encode(plain_txt).decode('utf-8')
             cipher_base64 = cipher_base64.replace('/', '_').replace('+', '-')
 
         txt = cipher_base64.replace("=", "")
@@ -36,15 +39,17 @@ class UHash(object):
         if not key:
             key = self.secret
 
-        md5_key = md5(key.encode("utf-8")).hexdigest()[0:24]
+        md5_key = hashlib.md5(key.encode("utf-8")).hexdigest()[0:24]
         spacing = '=' * (-len(data) % 4)
+        # spacing = "=" * (24 - len(data))
         data = "{data}{spacing}".format(data=data, spacing=spacing)
 
         try:
-            cipher_txt = b64decode(data, altchars="-_")
+            cipher_txt = base64.b64decode(data, altchars="-_")
         except Exception as e:
+            logger.error(e)
             data = data.replace('-', '+').replace('_', '/')
-            cipher_txt = b64decode(data)
+            cipher_txt = base64.b64decode(data)
 
         cipher = DES3.new(md5_key, DES3.MODE_ECB)
         cipher_decrypt = cipher.decrypt(cipher_txt)
@@ -53,7 +58,8 @@ class UHash(object):
         if is_base64 is True:
             cipher_unpad_txt = "{txt}=".format(txt=cipher_unpad_txt)
             bytes_cipher_unpad_txt = bytes(cipher_unpad_txt.encode("utf-8"))
-            txt = b64decode(bytes_cipher_unpad_txt + b'=' * (-len(bytes_cipher_unpad_txt) % 4)).decode("utf-8")
+            txt = base64.b64decode(bytes_cipher_unpad_txt + b'=' * (-len(bytes_cipher_unpad_txt) % 4)).decode(
+                "utf-8")
         else:
             txt = cipher_unpad_txt
         return txt

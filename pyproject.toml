@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "uhash"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 authors = ["NamTH <namth2302@gmail.com>"]
 packages = [
@@ -21,6 +21,8 @@ pytest-sugar = "^0.9.4"
 tox = "^3.24.4"
 tox-pyenv = "^1.1.0"
 pytest-watch = "^4.2.0"
+numpy = "^1.22.2"
+pycryptodome = "^3.14.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
