@@ -10,6 +10,8 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.6.2"
+numpy = "^1.22.2"
+pycryptodome = "^3.14.1"
 
 [tool.poetry.dev-dependencies]
 black = "^21.9b0"
