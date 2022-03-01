@@ -7,7 +7,6 @@ from loguru import logger
 from Crypto.Cipher import DES3
 from Crypto.Util.Padding import pad, unpad
 
-from urbox_lib.securities.config import URBOX_SECRET
 from uhash.config import URBOX_SECRET
 
 

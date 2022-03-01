@@ -1,1 +1,4 @@
-[]
+[
+  "tests/test_hash.py::test_encode",
+  "tests/test_hash.py::test_decode"
+]
