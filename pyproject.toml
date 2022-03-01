@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "uhash"
-version = "0.1.4"
+version = "0.1.5"
 description = ""
 authors = ["NamTH <namth2302@gmail.com>"]
 packages = [
